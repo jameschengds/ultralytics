@@ -7,7 +7,7 @@ FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
 RUN pip install --no-cache nvidia-tensorrt --index-url https://pypi.ngc.nvidia.com
 
 # Downloads to user config dir
-ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+ADD Arial.ttf Arial.Unicode.ttf /root/.config/Ultralytics/
 
 # Install linux packages
 # g++ required to build 'tflite_support' and 'lap' packages, libusb-1.0-0 required for 'tflite_support' package
@@ -28,15 +28,15 @@ ADD https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov8n.pt /u
 
 # Install pip packages
 RUN python3 -m pip install --upgrade pip wheel
-RUN pip install --no-cache -e ".[export]" albumentations comet pycocotools lancedb pytest-cov
+RUN pip --default-timeout=100 install --no-cache -e ".[export]" albumentations comet pycocotools lancedb pytest-cov -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 
 # Run exports to AutoInstall packages
 RUN yolo export model=tmp/yolov8n.pt format=edgetpu imgsz=32
 RUN yolo export model=tmp/yolov8n.pt format=ncnn imgsz=32
 # Requires <= Python 3.10, bug with paddlepaddle==2.5.0 https://github.com/PaddlePaddle/X2Paddle/issues/991
-RUN pip install --no-cache paddlepaddle==2.4.2 x2paddle
+RUN pip --default-timeout=100 install --no-cache paddlepaddle==2.4.2 x2paddle  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 # Fix error: `np.bool` was a deprecated alias for the builtin `bool` segmentation error in Tests
-RUN pip install --no-cache numpy==1.23.5
+RUN pip --default-timeout=100  install --no-cache numpy==1.23.5  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 # Remove exported models
 RUN rm -rf tmp
 
